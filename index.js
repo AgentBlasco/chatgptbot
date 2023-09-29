@@ -26,7 +26,7 @@ if (!MODEL_NAME) {
 
 // init global variables
 const MAX_LENGTH = 399
-let file_context = "Un beau chatbot"
+let file_content = "Un beau chatbot"
 let last_user_message = ""
 
 const messages = [
@@ -35,7 +35,7 @@ const messages = [
 
 console.log("GPT_MODE is " + GPT_MODE)
 console.log("History length is " + HISTORY_LENGTH)
-console.log("OpenAI API Key:" + OPENAI_API_KEY)
+//console.log("OpenAI API Key:" + OPENAI_API_KEY)
 console.log("Model Name:" + MODEL_NAME)
 
 app.use(express.json({extended: true, limit: '1mb'}))
@@ -47,19 +47,19 @@ app.all('/', (req, res) => {
 
 if (process.env.GPT_MODE === "CHAT"){
 
-    fs.readFile("./file_context.txt", 'utf8', function(err, data) {
+    fs.readFile("./file_content.txt", 'utf8', function(err, data) {
         if (err) throw err;
-        console.log("Reading context file and adding it as system level message for the agent.")
+        console.log("Reading content file and adding it as system level message for the agent.")
         messages[0].content = data;
     });
 
 } else {
 
-    fs.readFile("./file_context.txt", 'utf8', function(err, data) {
+    fs.readFile("./file_content.txt", 'utf8', function(err, data) {
         if (err) throw err;
-        console.log("Reading context file and adding it in front of user prompts:")
-        file_context = data;
-        console.log(file_context);
+        console.log("Reading content file and adding it in front of user prompts:")
+        file_content = data;
+        console.log(file_content);
     });
 
 }
@@ -127,7 +127,7 @@ app.get('/gpt/:text', async (req, res) => {
 
     } else {
         //PROMPT MODE EXECUTION
-        const prompt = file_context + "\n\nQ:" + text + "\nA:";
+        const prompt = file_content + "\n\nQ:" + text + "\nA:";
         console.log("User Input: " + text)
 
         const response = await openai.createCompletion({
